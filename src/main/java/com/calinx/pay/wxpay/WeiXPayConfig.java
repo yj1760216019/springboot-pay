@@ -10,22 +10,25 @@ import java.io.*;
 @Configuration
 public class WeiXPayConfig implements WXPayConfig {
     private byte[] certData;
-    @Value("${wxpay.appID}")
-    private String appID;
-    @Value("${wxpay.mchID}")
-    private  String mchID;
-    @Value("${wxpay.key}")
-    private String key;
-    @Value("${wxpay.httpConnectTimeoutMs}")
-    private int httpConnectTimeoutMs;
-    @Value("${wxpay.httpReadTimeoutMs}")
-    private int httpReadTimeoutMs;
-    @Value("${wxpay.certPath}")
-    private String certPath;
-    @Value("${wxpay.notifyUrl}")
+    //@Value("${wxpay.appID}")
+    private String appID = "*******";
+   //@Value("${wxpay.mchID}")
+    private  String mchID = "**********";
+    //@Value("${wxpay.key}")
+    private String key = "**********88";
+    //@Value("${wxpay.httpConnectTimeoutMs}")
+    private int httpConnectTimeoutMs = 30000;
+    //@Value("${wxpay.httpReadTimeoutMs}")
+    private int httpReadTimeoutMs = 30000;
+    //@Value("${wxpay.certPath}")
+    private String certPath = "D:\\certs\\wx\\apiclient_cert.p12";
+    //@Value("${wxpay.notifyUrl}")
     private String notifyUrl;
-    @Value("${wxpay.secret}")
-    private String secret;
+    //@Value("${wxpay.secret}")
+    private String secret = "************";
+    //退款回调
+    private String refundUrl;
+
 
     public InputStream getCertStream() {
         ByteArrayInputStream certBis = new ByteArrayInputStream(this.certData);
@@ -108,4 +111,20 @@ public class WeiXPayConfig implements WXPayConfig {
         this.secret = secret;
     }
 
+
+    public byte[] getCertData() {
+        return certData;
+    }
+
+    public void setCertData(byte[] certData) {
+        this.certData = certData;
+    }
+
+    public String getRefundUrl() {
+        return refundUrl;
+    }
+
+    public void setRefundUrl(String refundUrl) {
+        this.refundUrl = refundUrl;
+    }
 }
