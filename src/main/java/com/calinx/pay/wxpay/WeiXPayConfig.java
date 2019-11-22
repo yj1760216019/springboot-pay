@@ -11,11 +11,11 @@ import java.io.*;
 public class WeiXPayConfig implements WXPayConfig {
     private byte[] certData;
     //@Value("${wxpay.appID}")
-    private String appID = "*******";
+    private String appID = "wx4d6617bbdda011df";
    //@Value("${wxpay.mchID}")
-    private  String mchID = "**********";
+    private  String mchID = "1531253881";
     //@Value("${wxpay.key}")
-    private String key = "**********88";
+    private String key = "34f0ade8fde9ccac6af43525c2be7882";
     //@Value("${wxpay.httpConnectTimeoutMs}")
     private int httpConnectTimeoutMs = 30000;
     //@Value("${wxpay.httpReadTimeoutMs}")
@@ -23,9 +23,9 @@ public class WeiXPayConfig implements WXPayConfig {
     //@Value("${wxpay.certPath}")
     private String certPath = "D:\\certs\\wx\\apiclient_cert.p12";
     //@Value("${wxpay.notifyUrl}")
-    private String notifyUrl;
+    private String notifyUrl = "http://test.carlinx.cn/order/pay";
     //@Value("${wxpay.secret}")
-    private String secret = "************";
+    private String secret = "34e1f1929090c0da23f44f1859eb3000";
     //退款回调
     private String refundUrl;
 

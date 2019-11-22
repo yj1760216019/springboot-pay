@@ -1,7 +1,5 @@
 package com.calinx.pay.wxpay;
 
-import com.calinx.pay.utils.HttpUtil;
-import com.calinx.pay.utils.PaymentUtil;
 import com.github.wxpay.sdk.WXPay;
 import com.github.wxpay.sdk.WXPayConstants;
 import com.github.wxpay.sdk.WXPayUtil;
@@ -24,7 +22,7 @@ public class WXPayHelper {
     private WeiXPayConfig weiXPayConfig;
 
     /**
-     * 微信支付
+     * 微信支付 APP
      * @param body  商品描述
      * @param orderId   订单id
      * @param totalMoney    订单金额
@@ -33,31 +31,88 @@ public class WXPayHelper {
      * @throws Exception
      */
     public Map<String,String> payOrder(String body, String orderId, BigDecimal totalMoney, String additionalParam) throws Exception {
+        BigDecimal totalFree = totalMoney.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP);
+        WXPay wxPay = new WXPay(weiXPayConfig);
+        Map<String, String> data = new HashMap<String, String>();
+        //应用id
+        data.put("appid",weiXPayConfig.getAppID());
+        //商户号
+        data.put("mch_id",weiXPayConfig.getMchID());
+        //随机字符串
+        data.put("nonce_str",WXPayUtil.generateNonceStr());
+        //商品描述
+        data.put("body",body);
+        //商户订单号
+        data.put("out_trade_no",orderId);
+        //货币类型
+        data.put("fee_type","CNY");
+        //总金额
+        data.put("total_fee",totalFree.toString());
+        //终端ip
+        data.put("spbill_create_ip","127.0.0.1");
+        //通知回调地址
+        data.put("notify_url","http://test.carlinx.cn/order/");
+        //交易类型
+        data.put("trade_type","APP");
+        data.put("sign",WXPayUtil.generateSignature(data, weiXPayConfig.getKey(), WXPayConstants.SignType.MD5));
+        Map<String, String> untifiedResponse = wxPay.unifiedOrder(data);
+        if(WXPayConstants.SUCCESS.equals(untifiedResponse.get("return_code")) && WXPayConstants.SUCCESS.equals(untifiedResponse.get("result_code"))){
+            //调用成功  将调用结果返还给客户端
+            return untifiedResponse;
+        }
+        return null;
+    }
+
+
+    /**
+     * 微信支付  NATIVE
+     * @param body
+     * @param orderId
+     * @param totalMoney
+     * @param additionalParam
+     * @return
+     */
+    public String payOrderNative(String body,String orderId,BigDecimal totalMoney, String additionalParam) throws Exception {
         Map<String,String> result = null;
         BigDecimal totalFree = totalMoney.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP);
         WXPay wxPay = new WXPay(weiXPayConfig);
         Map<String, String> data = new HashMap<String, String>();
+        //公众账号ID
+        data.put("appid",weiXPayConfig.getAppID());
+        //商户号
+        data.put("mch_id",weiXPayConfig.getMchID());
+        //随机字符串
+        data.put("nonce_str",WXPayUtil.generateNonceStr());
+        //签名类型
+        data.put("sign_type","MD5");
+        //商品描述
         data.put("body",body);
-        data.put("out_trade_no",orderId);
-        data.put("total_fee",totalFree.toString());
-        data.put("fee_type","CNY");
+        //额外参数
         data.put("attach",additionalParam);
-        data.put("notify_url",weiXPayConfig.getNotifyUrl());
-        data.put("trade_type","APP");
-        Map<String, String> response = wxPay.unifiedOrder(data);
-        if(response.get("result_code").equals("SUCCESS")){
-            result=new LinkedHashMap<String, String>();
-            result.put("appid",weiXPayConfig.getAppID());
-            result.put("partnerid",weiXPayConfig.getMchID());
-            result.put("prepayid",response.get("prepay_id"));
-            result.put("package","Sign=WXPay");
-            result.put("noncestr", WXPayUtil.generateNonceStr());
-            result.put("timestamp", String.valueOf(System.currentTimeMillis()/1000));
-            String sign= WXPayUtil.generateSignature(result, weiXPayConfig.getKey(), WXPayConstants.SignType.MD5);
-            result.put("sign",sign );
+        //订单号
+        data.put("out_trade_no",orderId);
+        //币种
+        data.put("fee_type","CNY");
+        //支付金额
+        data.put("total_fee",totalFree.toString());
+        //终端ip
+        data.put("spbill_create_ip","127.0.0.1");
+        //回调地址
+        data.put("notify_url","www.baidu.com");
+        //支付类型
+        data.put("trade_type","NATIVE ");
+        //请求数据签名
+        data.put("sign",WXPayUtil.generateSignature(data, weiXPayConfig.getKey(), WXPayConstants.SignType.MD5));
+        Map<String, String> untifiedResponse = wxPay.unifiedOrder(data);
+        if(WXPayConstants.SUCCESS.equals(untifiedResponse.get("return_code")) && WXPayConstants.SUCCESS.equals(untifiedResponse.get("result_code"))){
+            //调用成功 返回code_url   用于生成二维码
+            return untifiedResponse.get("code_url");
         }
-        return  result;
+        return null;
     }
+
+
+
 
 
     /**
@@ -148,7 +203,6 @@ public class WXPayHelper {
             throw new RuntimeException("微信退款回调验证失败");
         }
     }
-
 
 
 }

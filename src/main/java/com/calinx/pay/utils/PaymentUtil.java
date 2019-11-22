@@ -9,7 +9,6 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,9 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PaymentUtil {
-
-    private PaymentUtil() {
-    }
 
     /**
      * 读取 request 中的数据
@@ -245,14 +241,6 @@ public class PaymentUtil {
         return sb.toString();
     }
 
-    public static void main(String[] args) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("e", "value1");
-        map.put("f", "value2");
-        map.put("a", "value3");
-        map.put("c", "value4");
-        System.out.println(sign(map));
-    }
 
     /**
      * 获得request的ip
@@ -318,4 +306,5 @@ public class PaymentUtil {
         }
         return null;
     }
+
 }
